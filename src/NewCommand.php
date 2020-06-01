@@ -67,6 +67,7 @@ class NewCommand extends Command
         $this->replaceNamespacesPath($directory . '/src', $namespace);
         $this->replaceNamespacesPath($directory . '/tests', $namespace);
 
+        $this->replaceNamespace($directory . '/api', self::NAMESPACE, $namespace);
         $this->replaceNamespace($directory . '/composer.json', str_replace("\\", "\\\\", self::NAMESPACE), str_replace("\\", "\\\\", $namespace));
     }
 
