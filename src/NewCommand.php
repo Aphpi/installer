@@ -64,23 +64,22 @@ class NewCommand extends Command
     {
         $this->output->writeln('<info>Replacing Namespaces...</info>');
 
-        foreach (glob($directory . '/src/*.php') as $file) {
-            $this->replaceNamespace($file, self::NAMESPACE, $namespace);
-        }
-
-        foreach (glob($directory . '/src/Api/*.php') as $file) {
-            $this->replaceNamespace($file, self::NAMESPACE, $namespace);
-        }
-
-        foreach (glob($directory . '/tests/*.php') as $file) {
-            $this->replaceNamespace($file, self::NAMESPACE, $namespace);
-        }
-
-        foreach (glob($directory . '/tests/Api/*.php') as $file) {
-            $this->replaceNamespace($file, self::NAMESPACE, $namespace);
-        }
+        $this->replaceNamespacesPath($directory . '/src', $namespace);
+        $this->replaceNamespacesPath($directory . '/tests', $namespace);
 
         $this->replaceNamespace($directory . '/composer.json', str_replace("\\", "\\\\", self::NAMESPACE), str_replace("\\", "\\\\", $namespace));
+    }
+
+    protected function replaceNamespacesPath(string $path, string $namespace)
+    {
+        $di = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $it = new \RecursiveIteratorIterator($di);
+
+        foreach($it as $file) {
+            if (pathinfo($file, \PATHINFO_EXTENSION) == "php") {
+                $this->replaceNamespace($file, self::NAMESPACE, $namespace);
+            }
+        }
     }
 
     protected function replaceNamespace(string $path, string $old_namespace, string $new_namespace)
